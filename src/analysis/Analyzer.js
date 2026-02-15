@@ -1,7 +1,7 @@
-const Tokenizer = require('./Tokenizer');
-const LowercaseFilter = require('./LowercaseFilter');
-const StopWordFilter = require('./StopWordFilter');
-const Stemmer = require('./Stemmer');
+import Tokenizer from './Tokenizer.js';
+import LowercaseFilter from './LowercaseFilter.js';
+import StopWordFilter from './StopWordFilter.js';
+import Stemmer from './Stemmer.js';
 
 /**
  * Analyzer: Chains all text processing steps
@@ -40,4 +40,4 @@ class Analyzer {
     }
 }
 
-module.exports = Analyzer;
+export default Analyzer;

@@ -13,4 +13,4 @@ class Tokenizer {
     }
 }
 
-module.exports = Tokenizer;
+export default Tokenizer;

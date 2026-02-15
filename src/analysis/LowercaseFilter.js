@@ -8,4 +8,4 @@ class LowercaseFilter {
     }
 }
 
-module.exports = LowercaseFilter;
+export default LowercaseFilter;

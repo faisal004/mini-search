@@ -1,4 +1,4 @@
-const stopwords = require('../utils/stopwords');
+import stopwords from '../utils/stopwords.js';
 
 /**
  * StopWordFilter: Removes common words that don't add meaning
@@ -10,4 +10,4 @@ class StopWordFilter {
     }
 }
 
-module.exports = StopWordFilter;
+export default StopWordFilter;

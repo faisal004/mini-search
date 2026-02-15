@@ -5,7 +5,7 @@
  * Using a library here is acceptable (natural or snowball-stemmer)
  * Implementing Porter Stemmer from scratch is 200+ lines and not the learning goal
  */
-const natural = require('natural');
+import natural from 'natural';
 const PorterStemmer = natural.PorterStemmer;
 
 class Stemmer {
@@ -14,4 +14,4 @@ class Stemmer {
     }
 }
 
-module.exports = Stemmer;
+export default Stemmer;

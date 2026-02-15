@@ -1,4 +1,4 @@
-const Analyzer = require('./analysis/Analyzer');
+import Analyzer from './analysis/Analyzer.js';
 
 const analyzer = new Analyzer();
 
