@@ -1,10 +1,11 @@
 /**
- * LowercaseFilter: Normalizes tokens to lowercase
+ * LowercaseFilter: Normalizes text to lowercase
  * Why: "Apple" and "apple" should be treated as the same term
  */
 class LowercaseFilter {
-    filter(tokens) {
-        return tokens.map(token => token.toLowerCase());
+    filter(text) {
+        if (typeof text !== 'string') return text;
+        return text.toLowerCase();
     }
 }
 

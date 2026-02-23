@@ -1,14 +1,14 @@
 /**
  * Tokenizer: Splits text into individual tokens
- * Strategy: Split on whitespace and punctuation, preserve alphanumeric
+ * Strategy: Split on whitespace
  */
 class Tokenizer {
     tokenize(text) {
         if (!text) return [];
 
-        // Split on non-alphanumeric characters, filter empty strings
+        // Split on whitespace characters, filter empty strings
         return text
-            .split(/[^a-zA-Z0-9]+/)
+            .split(/\s+/)
             .filter(token => token.length > 0);
     }
 }

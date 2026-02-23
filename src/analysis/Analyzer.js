@@ -1,5 +1,6 @@
-import Tokenizer from './Tokenizer.js';
 import LowercaseFilter from './LowercaseFilter.js';
+import PunctuationFilter from './PunctuationFilter.js';
+import Tokenizer from './Tokenizer.js';
 import StopWordFilter from './StopWordFilter.js';
 import Stemmer from './Stemmer.js';
 
@@ -7,12 +8,13 @@ import Stemmer from './Stemmer.js';
  * Analyzer: Chains all text processing steps
  * This is the SAME pipeline used for both indexing and querying
  * 
- * Pipeline: Raw Text -> Tokens -> Lowercase -> Remove Stopwords -> Stem
+ * Pipeline: Lowercase -> Remove Punctuation -> Tokenize -> Remove Stopwords -> Stem
  */
 class Analyzer {
     constructor() {
-        this.tokenizer = new Tokenizer();
         this.lowercaseFilter = new LowercaseFilter();
+        this.punctuationFilter = new PunctuationFilter();
+        this.tokenizer = new Tokenizer();
         this.stopWordFilter = new StopWordFilter();
         this.stemmer = new Stemmer();
     }
@@ -23,8 +25,10 @@ class Analyzer {
      * @returns {string[]} - Array of normalized tokens
      */
     analyze(text) {
-        let tokens = this.tokenizer.tokenize(text);
-        tokens = this.lowercaseFilter.filter(tokens);
+        let processedText = this.lowercaseFilter.filter(text);
+        processedText = this.punctuationFilter.filter(processedText);
+
+        let tokens = this.tokenizer.tokenize(processedText);
         tokens = this.stopWordFilter.filter(tokens);
         tokens = this.stemmer.stem(tokens);
 
