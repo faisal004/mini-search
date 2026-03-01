@@ -62,3 +62,15 @@ TF-IDF stands for **Term Frequency - Inverse Document Frequency**.
 - If a query has multiple terms, we sum up the scores for all matched terms in the document.
 
 **Why:** This approach elegantly balances both the local importance of a word to a document (TF) and the global importance of the word to the entire collection (IDF), leading to highly relevant search results.
+
+## Step 4: The Search Interface
+
+With the index built and a scoring mechanism in place, we created the **Search Engine Interface** (`src/search/SearchEngine.js`).
+
+**What we do:**
+- When a user submits a raw text query, we first pass it through our `QueryProcessor` (which uses the exact same `Analyzer` pipeline as our documents) to get normalized search tokens.
+- We look up each token in our `InvertedIndex` to find the set of documents that contain at least one of the query terms.
+- For each matching document, we calculate its overall score using the `TFIDFScorer` by summing the individual term scores.
+- We sort the results in descending order by score, so the most relevant documents appear at the top.
+
+**Why:** The search engine acts as the orchestrator. It connects the text processing pipeline, the data storage (index), and the ranking algorithm (TF-IDF) into a single, easy-to-use API (`searchEngine.search("query")`) that frontends or other applications can call.
