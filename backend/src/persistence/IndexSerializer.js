@@ -23,7 +23,7 @@ export default class IndexSerializer {
 
                 // Convert Map<docId, Document> to Array<[docId, docObject]>
                 documents: Array.from(index.documents.entries()).map(([id, doc]) => {
-                    return [id, doc.data]; // Store only the raw data, re-instantiate later
+                    return [id, doc.fields]; // Store only the raw data, re-instantiate later
                 }),
 
                 // Convert Map<term, Object> to Array<[term, Object]>

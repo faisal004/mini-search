@@ -30,7 +30,6 @@ function createSearchRouter(searchEngine) {
             const queryLower = q.toLowerCase();
 
             const allDocs = Array.from(searchEngine.index.documents.values());
-            console.log(allDocs);
             const hits = [];
 
             allDocs.forEach(doc => {
