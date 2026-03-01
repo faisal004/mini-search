@@ -100,6 +100,27 @@ To start the API server and try it out yourself:
    npm run dev
    ```
 3. In another terminal, query the API using `curl` or open the URL in your browser:
-   ```bash
-   curl "http://localhost:3000/api/search?q=matrix"
-   ```
+
+## Step 6: Real Data Ingestion Pipeline
+
+To make the engine practical, we replaced the hardcoded sample movies with real data fetched from an external API (TMDB - The Movie Database).
+
+**What we do:**
+- Created an ingestion pipeline in `src/ingestion/` consisting of:
+  - `tmdbFetcher.js`: Handles making HTTP requests to TMDB to fetch pages of popular movies. (It also includes a graceful fallback to a public mock dataset if an API key is missing).
+  - `normalizer.js`: Transforms the messy, raw JSON output from TMDB into the clean, uniform `Document` object structure our search engine expects (id, title, description, year).
+  - `pipeline.js`: The orchestrator that fetches the raw data, passes it through the normalizer, and returns the ready-to-index array.
+- We updated `src/app.js` and `src/index.js` to run this asynchronous pipeline before the server spins up.
+
+**Why:** Real search engines don't rely on hardcoded data. They ingest data from databases, web scrapers, or third-party APIs. By separating the _fetching_ and _normalizing_ logic from the core search engine logic, we ensure our search engine remains completely agnostic to where its data actually comes from.
+
+## Step 7: Index Persistence (Save & Load)
+
+As our dataset grows, rebuilding the index from scratch every time the server boots becomes too slow and expensive (especially when pulling from external APIs with rate limits). To solve this, we implemented **Index Persistence**.
+
+**What we do:**
+- We created `src/persistence/IndexSerializer.js`.
+- **Save**: After the first successful extraction and indexing run, the Serializer converts the intricate JavaScript `Map` objects of our `InvertedIndex` into a flat, JSON-compatible format and writes it to disk at `data/index.json`.
+- **Load**: On all subsequent server start-ups (in `src/app.js`), the engine checks if `data/index.json` exists. If it does, we deserialize the file back into our JavaScript `Map` objects, bypassing the entire API fetching and Index building steps.
+
+**Why:** This dramatically reduces boot time to near-zero and saves redundant API requests, bringing the engine closer to a production-ready architecture.
