@@ -1,126 +1,43 @@
-# Build a Mini Search Engine
+# Mini Search Engine - Fullstack App
 
-This repository documents the step-by-step creation of a mini search engine in JavaScript. 
+This repository contains a Custom Search Engine implemented from scratch, exposing a REST API, and a beautiful React Frontend to demonstrate its capabilities.
 
-## Step 1: Text Processing Pipeline
+## Architecture
 
-The first step in building a search engine is **text processing** (or text analysis). When a user searches for a query, or when a document is added to the search engine, the text needs to be normalized so that we can accurately match queries to documents. For instance, searching for "Running" should match documents containing "run", "runs", or "ran".
+The project has been split into two parts:
 
-In this step, we built an `Analyzer` pipeline (`src/analysis/Analyzer.js`) that processes raw text through the following stages:
+### 1. `/backend` (The Search Engine)
+A custom-built Mini Search Engine in Node.js/Express.
+- **Text Processing**: Case folding, punctuation removal, tokenization, stop words, stemming.
+- **Inverted Index**: O(1) term lookups and O(N) memory efficiency mapping words to documents.
+- **Scoring**: TF-IDF (Term Frequency - Inverse Document Frequency) for highly relevant ranking.
+- **Ingestion**: Fetches real movies from the TMDB API and normalizes them.
+- **Persistence**: Serializes and saves the built index memory Maps to disk (`/data/index.json`) for instant boot times.
 
-1. **Case Sensitivity (`LowercaseFilter.js`)**
-   - **What we do:** Convert all text to lowercase.
-   - **Why:** To make the search case-insensitive. Searching for "Apple" should match "apple".
-   
-2. **Punctuation (`PunctuationFilter.js`)**
-   - **What we do:** Remove all non-alphanumeric characters (like `,`, `.`, `!`, `?` etc.).
-   - **Why:** Punctuation usually doesn't add meaning to a keyword search. 'Hello!' and 'Hello' should be indexed as the exact same term.
+### 2. `/frontend` (The React App)
+A Vite + React application with a premium, glassmorphic UI.
+It acts as a visual comparison tool. When you search, it fires requests to two different endpoints simultaneously:
+1. **🚀 Our Engine (Mini Search)**: Uses the TF-IDF and Inverted Index.
+2. **🐢 Naive Search**: A standard database-like `String.includes()` match.
 
-3. **Tokenization (`Tokenizer.js`)**
-   - **What we do:** Split the text string into individual words (tokens) based on whitespace.
-   - **Why:** The search engine needs individual terms to build its index and to evaluate queries word by word.
+This perfectly demonstrates the superiority of normalized, tokenized indexing over standard string matching!
 
-4. **Stop Words (`StopWordFilter.js`)**
-   - **What we do:** Filter out extremely common words like "the", "is", "at", "which".
-   - **Why:** These words appear in almost every document and rarely help distinguish one document from another. Removing them significantly reduces the index size and speeds up search.
+## How to Run
 
-5. **Stemming (`Stemmer.js`)**
-   - **What we do:** Reduce words to their root or base form (e.g., "running", "runs" → "run").
-   - **Why:** This increases recall. If a user searches for "run", they likely also want documents detailing "running" shoes. We use the Porter Stemmer algorithm (via the `natural` library) for this.
+You will need two terminal windows running simultaneously.
 
-**How it comes together:**
-The `Analyzer` class chains these filters sequentially. Raw text goes in, and an array of normalized tokens comes out, ready to be indexed!
+### Start the Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
 
-## Step 2: The Inverted Index
+### Start the Frontend
+```bash
+cd frontend
+# Vite dependencies were already installed during creation
+npm run dev
+```
 
-After processing the text of our documents, we need a way to store it so we can quickly find which documents contain which words. For this, we use an **Inverted Index** (`src/index/InvertedIndex.js`).
-
-Unlike a forward index (which maps documents to words), an inverted index maps words to the documents that contain them.
-
-**What we do:**
-- For every new document added, we run its fields through our `Analyzer` to get the tokens.
-- We count how many times each token appears in the document (Term Frequency or TF).
-- We update our index map: for every token (term), we maintain a list of "postings". Each posting tells us:
-  - Document ID
-  - Term Frequency (TF) for that document
-  - Total tokens in the document (used to normalize TF)
-
-**Why:** It allows for O(1) or O(log N) lookups for query words, rather than scanning every document one by one (O(N) time).
-
-## Step 3: Document Scoring (TF-IDF)
-
-When multiple documents match a search query, how do we decide which one is the "best" match? To rank the results, we implemented **TF-IDF Scoring** (`src/scoring/TFIDFScorer.js`).
-
-TF-IDF stands for **Term Frequency - Inverse Document Frequency**.
-
-1. **Term Frequency (TF):** How often does the term appear in this specific document? The more it appears, the more relevant the document probably is. It is normalized by the total number of terms in the document to prevent long documents from unfairly scoring higher.
-2. **Inverse Document Frequency (IDF):** How rare is the term across *all* documents? If a word is rare (like "xylophone") and appears in a document, it's a very strong signal. If it's common (like "engine" in a car database), it's a weaker signal.
-   - `IDF = Math.log(total_documents / documents_containing_the_term)`
-
-**What we do:**
-- When a query is searching for a term, for each matching document, we calculate its score as `TF * IDF * field_weight` (allowing us to boost matches in titles over bodies, for example).
-- If a query has multiple terms, we sum up the scores for all matched terms in the document.
-
-**Why:** This approach elegantly balances both the local importance of a word to a document (TF) and the global importance of the word to the entire collection (IDF), leading to highly relevant search results.
-
-## Step 4: The Search Interface
-
-With the index built and a scoring mechanism in place, we created the **Search Engine Interface** (`src/search/SearchEngine.js`).
-
-**What we do:**
-- When a user submits a raw text query, we first pass it through our `QueryProcessor` (which uses the exact same `Analyzer` pipeline as our documents) to get normalized search tokens.
-- We look up each token in our `InvertedIndex` to find the set of documents that contain at least one of the query terms.
-- For each matching document, we calculate its overall score using the `TFIDFScorer` by summing the individual term scores.
-- We sort the results in descending order by score, so the most relevant documents appear at the top.
-
-**Why:** The search engine acts as the orchestrator. It connects the text processing pipeline, the data storage (index), and the ranking algorithm (TF-IDF) into a single, easy-to-use API (`searchEngine.search("query")`) that frontends or other applications can call.
-
-## Step 5: The API Server
-
-Now that the core engine works, we exposed it as a web service so that frontends (like a React or Vue app) can easily query it. We achieved this by wrapping the engine in an **Express.js API Server** (`src/api/server.js`).
-
-**What we do:**
-- We initialize the search engine and feed it our dataset inside `src/app.js`.
-- We spin up an Express server and configure essential middleware like `cors` (to allow browser requests) and JSON body parsing.
-- We expose a RESTful endpoint at `GET /api/search?q=<query>`.
-- The `search` route takes the query parameter `q`, passes it to our `SearchEngine`, and returns the ranked results as a structured JSON response.
-
-**Why:** A search engine needs a way to communicate with client applications. By providing a standard REST API, the engine becomes platform-agnostic and accessible over HTTP.
-
-### Running the App
-
-To start the API server and try it out yourself:
-
-1. Install dependencies (if you haven't):
-   ```bash
-   npm install
-   ```
-2. Start the server:
-   ```bash
-   npm run dev
-   ```
-3. In another terminal, query the API using `curl` or open the URL in your browser:
-
-## Step 6: Real Data Ingestion Pipeline
-
-To make the engine practical, we replaced the hardcoded sample movies with real data fetched from an external API (TMDB - The Movie Database).
-
-**What we do:**
-- Created an ingestion pipeline in `src/ingestion/` consisting of:
-  - `tmdbFetcher.js`: Handles making HTTP requests to TMDB to fetch pages of popular movies. (It also includes a graceful fallback to a public mock dataset if an API key is missing).
-  - `normalizer.js`: Transforms the messy, raw JSON output from TMDB into the clean, uniform `Document` object structure our search engine expects (id, title, description, year).
-  - `pipeline.js`: The orchestrator that fetches the raw data, passes it through the normalizer, and returns the ready-to-index array.
-- We updated `src/app.js` and `src/index.js` to run this asynchronous pipeline before the server spins up.
-
-**Why:** Real search engines don't rely on hardcoded data. They ingest data from databases, web scrapers, or third-party APIs. By separating the _fetching_ and _normalizing_ logic from the core search engine logic, we ensure our search engine remains completely agnostic to where its data actually comes from.
-
-## Step 7: Index Persistence (Save & Load)
-
-As our dataset grows, rebuilding the index from scratch every time the server boots becomes too slow and expensive (especially when pulling from external APIs with rate limits). To solve this, we implemented **Index Persistence**.
-
-**What we do:**
-- We created `src/persistence/IndexSerializer.js`.
-- **Save**: After the first successful extraction and indexing run, the Serializer converts the intricate JavaScript `Map` objects of our `InvertedIndex` into a flat, JSON-compatible format and writes it to disk at `data/index.json`.
-- **Load**: On all subsequent server start-ups (in `src/app.js`), the engine checks if `data/index.json` exists. If it does, we deserialize the file back into our JavaScript `Map` objects, bypassing the entire API fetching and Index building steps.
-
-**Why:** This dramatically reduces boot time to near-zero and saves redundant API requests, bringing the engine closer to a production-ready architecture.
+Then open your browser to `http://localhost:5173` to experience the search engine!
