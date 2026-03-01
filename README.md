@@ -30,3 +30,35 @@ In this step, we built an `Analyzer` pipeline (`src/analysis/Analyzer.js`) that 
 
 **How it comes together:**
 The `Analyzer` class chains these filters sequentially. Raw text goes in, and an array of normalized tokens comes out, ready to be indexed!
+
+## Step 2: The Inverted Index
+
+After processing the text of our documents, we need a way to store it so we can quickly find which documents contain which words. For this, we use an **Inverted Index** (`src/index/InvertedIndex.js`).
+
+Unlike a forward index (which maps documents to words), an inverted index maps words to the documents that contain them.
+
+**What we do:**
+- For every new document added, we run its fields through our `Analyzer` to get the tokens.
+- We count how many times each token appears in the document (Term Frequency or TF).
+- We update our index map: for every token (term), we maintain a list of "postings". Each posting tells us:
+  - Document ID
+  - Term Frequency (TF) for that document
+  - Total tokens in the document (used to normalize TF)
+
+**Why:** It allows for O(1) or O(log N) lookups for query words, rather than scanning every document one by one (O(N) time).
+
+## Step 3: Document Scoring (TF-IDF)
+
+When multiple documents match a search query, how do we decide which one is the "best" match? To rank the results, we implemented **TF-IDF Scoring** (`src/scoring/TFIDFScorer.js`).
+
+TF-IDF stands for **Term Frequency - Inverse Document Frequency**.
+
+1. **Term Frequency (TF):** How often does the term appear in this specific document? The more it appears, the more relevant the document probably is. It is normalized by the total number of terms in the document to prevent long documents from unfairly scoring higher.
+2. **Inverse Document Frequency (IDF):** How rare is the term across *all* documents? If a word is rare (like "xylophone") and appears in a document, it's a very strong signal. If it's common (like "engine" in a car database), it's a weaker signal.
+   - `IDF = Math.log(total_documents / documents_containing_the_term)`
+
+**What we do:**
+- When a query is searching for a term, for each matching document, we calculate its score as `TF * IDF * field_weight` (allowing us to boost matches in titles over bodies, for example).
+- If a query has multiple terms, we sum up the scores for all matched terms in the document.
+
+**Why:** This approach elegantly balances both the local importance of a word to a document (TF) and the global importance of the word to the entire collection (IDF), leading to highly relevant search results.
