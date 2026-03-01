@@ -1,28 +1,32 @@
-import tmdbFetcher from './tmdbFetcher.js';
-import normalizer from './normalizer.js';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * The main pipeline that coordinates fetching, normalizing, and returning data
  */
 class DataIngestionPipeline {
     /**
-     * Execute the pipeline to fetch and normalize real movie data
-     * @returns {Promise<Array>} Array of normalized movie objects
+     * Execute the pipeline to load product data
+     * @returns {Promise<Array>} Array of product objects
      */
     async runPipeline() {
         console.log("=== Starting Data Ingestion Pipeline ===");
 
-        // 1. Fetch
-        console.log("-> Fetching raw data...");
-        const rawData = await tmdbFetcher.fetchPopularMovies(50); // Fetch 5 pages
-        console.log(`   Fetched ${rawData.length} raw records.`);
+        // 1. Load data
+        console.log("-> Loading product data...");
+        const dataPath = path.join(process.cwd(), 'data', 'products.json');
 
-        // 2. Normalize
-        console.log("-> Normalizing data format...");
-        const normalizedData = normalizer.normalize(rawData);
+        if (!fs.existsSync(dataPath)) {
+            throw new Error("Products file not found. Please run scripts/generate-products.js first.");
+        }
+
+        const rawData = fs.readFileSync(dataPath, 'utf-8');
+        const products = JSON.parse(rawData);
+
+        console.log(`   Loaded ${products.length} products.`);
 
         console.log("=== Pipeline Complete ===");
-        return normalizedData;
+        return products;
     }
 }
 

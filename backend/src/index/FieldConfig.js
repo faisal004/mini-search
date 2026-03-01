@@ -7,8 +7,8 @@ class FieldConfig {
         this.fields = {
             title: { weight: 2.0, stored: true },
             description: { weight: 1.0, stored: true },
-            genre: { weight: 1.5, stored: true },
-            year: { weight: 0.5, stored: true }
+            brand: { weight: 1.5, stored: true },
+            category: { weight: 1.2, stored: true }
         };
     }
 

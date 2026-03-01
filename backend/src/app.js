@@ -27,22 +27,22 @@ async function initializeSearchEngine() {
 
     // 2. If load failed (doesn't exist), run ingestion pipeline
     console.log("Building new index from ingestion pipeline...");
-    const movies = await pipeline.runPipeline();
+    const products = await pipeline.runPipeline();
 
     // Index documents
     console.log('Indexing documents...');
     let indexedCount = 0;
 
-    movies.forEach(movie => {
-        // Skip invalid movies
-        if (!movie.id || !movie.title) return;
+    products.forEach(product => {
+        // Skip invalid products
+        if (!product.id || !product.title) return;
 
-        const doc = new Document(movie.id, movie);
+        const doc = new Document(product.id, product);
         index.addDocument(doc);
         indexedCount++;
     });
 
-    console.log(`\nSuccessfully indexed ${indexedCount} out of ${movies.length} fetched documents.`);
+    console.log(`\nSuccessfully indexed ${indexedCount} out of ${products.length} fetched documents.`);
     console.log('Index stats:', index.getStats());
 
     // 3. Save the newly built index for future runs

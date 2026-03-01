@@ -35,8 +35,13 @@ function createSearchRouter(searchEngine) {
             allDocs.forEach(doc => {
                 const title = doc.getField('title') || "";
                 const desc = doc.getField('description') || "";
+                const brand = doc.getField('brand') || "";
+                const category = doc.getField('category') || "";
 
-                if (title.toLowerCase().includes(queryLower) || desc.toLowerCase().includes(queryLower)) {
+                if (title.toLowerCase().includes(queryLower) ||
+                    desc.toLowerCase().includes(queryLower) ||
+                    brand.toLowerCase().includes(queryLower) ||
+                    category.toLowerCase().includes(queryLower)) {
                     hits.push({
                         docId: doc.id,
                         score: 0,

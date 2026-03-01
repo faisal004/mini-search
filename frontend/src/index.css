@@ -309,3 +309,92 @@ h1 {
   border-radius: 4px;
   margin-left: 2px;
 }
+
+/* Product Card Enhancements */
+.product-card {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.product-image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-details {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.product-price {
+  font-weight: 700;
+  color: #4ade80;
+}
+
+.product-rating {
+  color: #facc15;
+  font-weight: 600;
+}
+
+.card-brand {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Toggle Buttons */
+.search-mode-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.toggle-btn {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.toggle-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.single-panel-container {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}

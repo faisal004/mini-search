@@ -3,6 +3,7 @@ import ResultCard from './components/ResultCard';
 
 function App() {
   const [query, setQuery] = useState('');
+  const [searchMode, setSearchMode] = useState('smart'); // 'smart' or 'naive'
   const [customResults, setCustomResults] = useState({ hits: [], total: 0 });
   const [naiveResults, setNaiveResults] = useState({ hits: [], total: 0 });
   const [isSearching, setIsSearching] = useState(false);
@@ -64,50 +65,65 @@ function App() {
         {isSearching && <div className="search-spinner"></div>}
       </div>
 
-      <div className="comparison-container">
-        {/* Our Custom Engine */}
-        <div className="engine-panel">
-          <div className="panel-header">
-            <h2 className="panel-title">
-              <span className="badge-custom">🚀 Our Engine</span> (Mini Search)
-            </h2>
-            <span className="results-meta">{customResults.total} results found</span>
-          </div>
-          
-          <div className="results-list">
-            {customResults.hits.length > 0 ? (
-              customResults.hits.map(hit => (
-                <ResultCard key={`custom-${hit.docId}`} result={hit} showScore={true} />
-              ))
-            ) : (
-              <div className="empty-state">
-                {query ? "No intelligent matches found." : "Type a query to see smart matching."}
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="search-mode-toggle">
+        <button 
+          className={`toggle-btn ${searchMode === 'smart' ? 'active' : ''}`}
+          onClick={() => setSearchMode('smart')}
+        >
+          🚀 Smart Search
+        </button>
+        <button 
+          className={`toggle-btn ${searchMode === 'naive' ? 'active' : ''}`}
+          onClick={() => setSearchMode('naive')}
+        >
+          🐢 Naive Search
+        </button>
+      </div>
 
-        {/* Naive Search Engine */}
-        <div className="engine-panel">
-          <div className="panel-header">
-            <h2 className="panel-title">
-              <span className="badge-naive">🐢 Naive Search</span> (String.includes)
-            </h2>
-            <span className="results-meta">{naiveResults.total} results found</span>
+      <div className="single-panel-container">
+        {searchMode === 'smart' ? (
+          <div className="engine-panel">
+            <div className="panel-header">
+              <h2 className="panel-title">
+                <span className="badge-custom">🚀 Our Engine</span> (Mini Search)
+              </h2>
+              <span className="results-meta">{customResults.total} results found</span>
+            </div>
+            
+            <div className="results-list">
+              {customResults.hits.length > 0 ? (
+                customResults.hits.map(hit => (
+                  <ResultCard key={`custom-${hit.docId}`} result={hit} showScore={true} />
+                ))
+              ) : (
+                <div className="empty-state">
+                  {query ? "No intelligent matches found." : "Type a query to see smart matching."}
+                </div>
+              )}
+            </div>
           </div>
+        ) : (
+          <div className="engine-panel">
+            <div className="panel-header">
+              <h2 className="panel-title">
+                <span className="badge-naive">🐢 Naive Search</span> (String.includes)
+              </h2>
+              <span className="results-meta">{naiveResults.total} results found</span>
+            </div>
 
-          <div className="results-list">
-            {naiveResults.hits.length > 0 ? (
-              naiveResults.hits.map(hit => (
-                <ResultCard key={`naive-${hit.docId}`} result={hit} showScore={false} />
-              ))
-            ) : (
-              <div className="empty-state">
-                {query ? "No exact substring matches found." : "Type a query to see exact matching."}
-              </div>
-            )}
+            <div className="results-list">
+              {naiveResults.hits.length > 0 ? (
+                naiveResults.hits.map(hit => (
+                  <ResultCard key={`naive-${hit.docId}`} result={hit} showScore={false} />
+                ))
+              ) : (
+                <div className="empty-state">
+                  {query ? "No exact substring matches found." : "Type a query to see exact matching."}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
