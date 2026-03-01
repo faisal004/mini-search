@@ -15,7 +15,7 @@ A custom-built Mini Search Engine in Node.js/Express.
 - **Persistence**: Serializes and saves the built index memory Maps to disk (`/data/index.json`) for instant boot times.
 
 ### 2. `/frontend` (The React App)
-A Vite + React application with a premium, glassmorphic UI.
+A Vite + React application .
 It acts as a visual comparison tool. When you search, it fires requests to two different endpoints simultaneously:
 1. **🚀 Our Engine (Mini Search)**: Uses the TF-IDF and Inverted Index.
 2. **🐢 Naive Search**: A standard database-like `String.includes()` match.
@@ -36,7 +36,7 @@ npm run dev
 ### Start the Frontend
 ```bash
 cd frontend
-# Vite dependencies were already installed during creation
+npm install
 npm run dev
 ```
 
