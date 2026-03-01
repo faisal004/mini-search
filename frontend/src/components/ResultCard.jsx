@@ -42,7 +42,7 @@ const ResultCard = ({ result, showScore }) => {
               {result.reasons.map((reason, idx) => (
                 <span key={idx} className="reason-tag">
                   <span className="reason-term">"{reason.term}"</span> in <span className="reason-field">{reason.field}</span>
-                  <span className="reason-score">(+{reason.score.toFixed(2)})</span>
+                  {/* <span className="reason-score">(+{reason.score.toFixed(2)})</span> */}
                 </span>
               ))}
             </div>
