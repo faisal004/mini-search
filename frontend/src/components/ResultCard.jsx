@@ -1,12 +1,18 @@
 const ResultCard = ({ result, showScore }) => {
   const doc = result.document;
 
+  // The backend uses a 'fields' object inside the Document class
+  const title = doc.fields?.title || doc.data?.title || doc.title || "No Title";
+  const year = doc.fields?.year || doc.data?.year || doc.year || "Unknown";
+  const description = doc.fields?.description || doc.data?.description || doc.description || doc.overview || "No description available.";
+  const genre = doc.fields?.genre || doc.data?.genre || doc.genre || "N/A";
+
   return (
     <div className="result-card">
       <div className="card-header">
         <h3 className="card-title">
-          {doc.data?.title || doc.title || "No Title"}
-          <span className="card-year">{doc.data?.year || doc.year || "Unknown"}</span>
+          {title}
+          <span className="card-year">{year}</span>
         </h3>
         {showScore && result.score > 0 && (
           <span className="card-score">Score: {result.score.toFixed(4)}</span>
@@ -14,11 +20,11 @@ const ResultCard = ({ result, showScore }) => {
       </div>
       
       <p className="card-desc">
-        {doc.data?.description || doc.description || doc.overview || "No description available."}
+        {description}
       </p>
 
       <div className="card-footer">
-        <span className="card-genre">{doc.data?.genre || doc.genre || "N/A"}</span>
+        <span className="card-genre">{genre}</span>
       </div>
     </div>
   );
