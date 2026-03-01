@@ -21,7 +21,7 @@
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: var(--bg-color);
-  background-image: 
+  background-image:
     radial-gradient(circle at 15% 50%, rgba(88, 166, 255, 0.08), transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(210, 153, 34, 0.08), transparent 25%);
   color: var(--text-main);
@@ -147,8 +147,13 @@ h1 {
   gap: 0.5rem;
 }
 
-.badge-custom { color: var(--accent); }
-.badge-naive { color: var(--warning); }
+.badge-custom {
+  color: var(--accent);
+}
+
+.badge-naive {
+  color: var(--warning);
+}
 
 .results-meta {
   font-size: 0.85rem;
@@ -249,5 +254,63 @@ h1 {
 }
 
 @keyframes spin {
-  to { transform: translateY(-50%) rotate(360deg); }
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+/* Ranking Reasons */
+.card-reasons {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.85em;
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.reasons-title {
+  display: block;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-size: 0.9em;
+}
+
+.reasons-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reason-tag {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reason-term {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.reason-field {
+  font-style: italic;
+  color: #a371f7;
+}
+
+.reason-score {
+  color: var(--success);
+  font-family: monospace;
+  background: rgba(35, 134, 54, 0.1);
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-left: 2px;
 }

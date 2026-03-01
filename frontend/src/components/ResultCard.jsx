@@ -23,6 +23,20 @@ const ResultCard = ({ result, showScore }) => {
         {description}
       </p>
 
+      {showScore && result.reasons && result.reasons.length > 0 && (
+        <div className="card-reasons">
+          <span className="reasons-title">Matched terms:</span>
+          <div className="reasons-list">
+            {result.reasons.map((reason, idx) => (
+              <span key={idx} className="reason-tag">
+                <span className="reason-term">"{reason.term}"</span> in <span className="reason-field">{reason.field}</span>
+                <span className="reason-score">(+{reason.score})</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="card-footer">
         <span className="card-genre">{genre}</span>
       </div>

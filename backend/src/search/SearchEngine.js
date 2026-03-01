@@ -25,10 +25,15 @@ class SearchEngine {
         // Score each matched document
         const results = [];
         for (const docId of matchedDocIds) {
-            const score = this.scorer.score(tokens, docId);
-            if (score > 0) {
+            const explanation = this.scorer.explainScore(tokens, docId);
+            if (explanation.totalScore > 0) {
                 const document = this.index.getDocument(docId);
-                results.push({ docId, score, document });
+                results.push({
+                    docId,
+                    score: parseFloat(explanation.totalScore), // keep score as a number
+                    reasons: explanation.termScores,
+                    document
+                });
             }
         }
 
