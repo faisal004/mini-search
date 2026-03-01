@@ -14,7 +14,7 @@ class DataIngestionPipeline {
 
         // 1. Fetch
         console.log("-> Fetching raw data...");
-        const rawData = await tmdbFetcher.fetchPopularMovies(5); // Fetch 5 pages
+        const rawData = await tmdbFetcher.fetchPopularMovies(50); // Fetch 5 pages
         console.log(`   Fetched ${rawData.length} raw records.`);
 
         // 2. Normalize
