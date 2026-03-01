@@ -74,3 +74,32 @@ With the index built and a scoring mechanism in place, we created the **Search E
 - We sort the results in descending order by score, so the most relevant documents appear at the top.
 
 **Why:** The search engine acts as the orchestrator. It connects the text processing pipeline, the data storage (index), and the ranking algorithm (TF-IDF) into a single, easy-to-use API (`searchEngine.search("query")`) that frontends or other applications can call.
+
+## Step 5: The API Server
+
+Now that the core engine works, we exposed it as a web service so that frontends (like a React or Vue app) can easily query it. We achieved this by wrapping the engine in an **Express.js API Server** (`src/api/server.js`).
+
+**What we do:**
+- We initialize the search engine and feed it our dataset inside `src/app.js`.
+- We spin up an Express server and configure essential middleware like `cors` (to allow browser requests) and JSON body parsing.
+- We expose a RESTful endpoint at `GET /api/search?q=<query>`.
+- The `search` route takes the query parameter `q`, passes it to our `SearchEngine`, and returns the ranked results as a structured JSON response.
+
+**Why:** A search engine needs a way to communicate with client applications. By providing a standard REST API, the engine becomes platform-agnostic and accessible over HTTP.
+
+### Running the App
+
+To start the API server and try it out yourself:
+
+1. Install dependencies (if you haven't):
+   ```bash
+   npm install
+   ```
+2. Start the server:
+   ```bash
+   npm run dev
+   ```
+3. In another terminal, query the API using `curl` or open the URL in your browser:
+   ```bash
+   curl "http://localhost:3000/api/search?q=matrix"
+   ```
